@@ -1,27 +1,30 @@
-import '../css/style.css'
-import { Actor, Engine, Vector, DisplayMode } from "excalibur"
-import { Resources, ResourceLoader } from './resources.js'
+import '../css/style.css';
+import {Actor, Engine, Vector, DisplayMode} from 'excalibur';
+import {Resources, ResourceLoader} from './resources.js';
+import {circuits} from './circuit-data.js';
+import {Circuit} from './circuit-scene.js';
 
 export class Game extends Engine {
+	circuitIds = [];
 
-    constructor() {
-        super({ 
-            width: 1280,
-            height: 720,
-            maxFps: 60,
-            displayMode: DisplayMode.FitScreen
-         })
-        this.start(ResourceLoader).then(() => this.startGame())
-    }
+	constructor() {
+		super({
+			width: 1440,
+			height: 900,
+			maxFps: 60,
+			displayMode: DisplayMode.FitScreen
+		});
+		this.circuitIds = Object.keys(circuits);
+		this.circuitIds.forEach((circuitId) => {
+			const circuitData = circuits[circuitId];
+			this.addScene(circuitId, new Circuit(circuitId, circuitData.getTrackJointsData(), circuitData.getTrackStraightsData()));
+		});
+		this.start(ResourceLoader).then(() => this.startGame());
+	}
 
-    startGame() {
-        console.log("start de game!")
-        const fish = new Actor()
-        fish.graphics.use(Resources.Fish.toSprite())
-        fish.pos = new Vector(400, 300)
-        fish.vel = new Vector(-10,0)
-        this.add(fish)
-    }
+	startGame() {
+		this.goToScene(this.circuitIds[0]);
+	}
 }
 
-new Game()
+new Game();
