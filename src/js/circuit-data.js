@@ -21,15 +21,19 @@ class CircuitData {
 
 	getTrackJointsData() {
 		const jointsData = [];
-		this.waypoints.forEach((waypoint) => {
+		this.waypoints.forEach((waypoint, index) => {
 			const {x, y, checkpoint, start, finish} = waypoint;
+			const next = (({x, y}) => ({x, y}))(this.waypoints[index + 1] || this.waypoints[0]);
+			const rotation = Math.atan2(y - next.y, x - next.x);
 			jointsData.push({
 				pos: new Vector(x, y),
+				rotation,
 				checkpoint,
 				start,
 				finish,
 				radius: this.trackWidth / 2,
-				color: this.color
+				color: this.color,
+				grassWidth: this.grassWidth
 			});
 		});
 		return jointsData;
@@ -47,6 +51,7 @@ class CircuitData {
 				distance,
 				rotation,
 				trackWidth: this.trackWidth,
+				grassWidth: this.grassWidth,
 				color: this.color
 			});
 		});
@@ -54,7 +59,7 @@ class CircuitData {
 	}
 }
 
-circuits['spa-francorchamps'] = new CircuitData('spa-francorchamps', 60, 4, 3, Color.fromHex('#232222'), [
+circuits['spa-francorchamps'] = new CircuitData('spa-francorchamps', 130, 38, 3, Color.fromHex('#282525'), [
 	{x: 897, y: 2050, checkpoint: false, start: true, finish: true},
 	{x: 695, y: 2189, checkpoint: false, start: false, finish: false},
 	{x: 229, y: 2491, checkpoint: false, start: false, finish: false},

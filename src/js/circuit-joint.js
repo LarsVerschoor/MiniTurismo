@@ -1,6 +1,7 @@
-import {Actor, Circle, CircleCollider} from 'excalibur';
+import {Actor, Circle, CircleCollider, Color} from 'excalibur';
+import {player} from './player';
 
-class Joint extends Actor {
+class TrackJoint extends Actor {
 	checkpoint;
 	start;
 	finish;
@@ -8,10 +9,11 @@ class Joint extends Actor {
 	visited = false;
 	hasCar = false;
 
-	constructor({pos, checkpoint, start, finish, radius, color}) {
+	constructor({pos, rotation, checkpoint, start, finish, radius, color}) {
 		super({
 			pos,
-			collider: new CircleCollider({radius})
+			collider: new CircleCollider({radius}),
+			rotation
 		});
 		this.checkpoint = checkpoint;
 		this.start = start;
@@ -22,18 +24,39 @@ class Joint extends Actor {
 		});
 	}
 
-	onInitialize(engine) {
+	onInitialize() {
 		this.graphics.use(this.shape);
 		this.on('collisionstart', (e) => {
-			// if (e.other !== engine.player.car) return;
-			// this.hasCar = true;
-			// this.visited = true;
+			if (e.other !== player.carActor) return;
+			this.hasCar = true;
+			this.visited = true;
 		});
 		this.on('collisionend', (e) => {
-			// if (e.other !== engine.player.car) return;
-			// this.hasCar = false;
+			if (e.other !== player.carActor) return;
+			this.hasCar = false;
 		});
 	}
 }
 
-export {Joint};
+class GrassJoint extends Actor {
+	radius;
+	color;
+	shape;
+
+	constructor({pos, rotation, radius, grassWidth}) {
+		super({
+			pos,
+			rotation
+		});
+		this.shape = new Circle({
+			radius: radius + grassWidth,
+			color: Color.fromHex('5ba01b')
+		});
+	}
+
+	onInitialize() {
+		this.graphics.use(this.shape);
+	}
+}
+
+export {TrackJoint, GrassJoint};
