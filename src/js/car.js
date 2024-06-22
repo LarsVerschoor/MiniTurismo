@@ -13,6 +13,7 @@ class Car extends Actor {
 	rotationSpeed;
 	maxRotationSpeed;
 	image;
+	racing = false;
 
 	constructor({
 		name,
@@ -60,13 +61,13 @@ class Car extends Actor {
 		const deltaSeconds = delta / 1000;
 
 		// acceleration / braking
-		if (engine.input.keyboard.isHeld(Keys.W) && this.speed <= 0) {
+		if (this.racing && engine.input.keyboard.isHeld(Keys.W) && this.speed <= 0) {
 			this.accelerate(deltaSeconds, false);
-		} else if (engine.input.keyboard.isHeld(Keys.W) && this.speed > 0) {
+		} else if ((engine.input.keyboard.isHeld(Keys.W) || !this.racing) && this.speed > 0) {
 			this.brake(deltaSeconds, true);
-		} else if (engine.input.keyboard.isHeld(Keys.S) && this.speed >= 0) {
+		} else if (this.racing && engine.input.keyboard.isHeld(Keys.S) && this.speed >= 0) {
 			this.accelerate(deltaSeconds, true);
-		} else if (engine.input.keyboard.isHeld(Keys.S) && this.speed < 0) {
+		} else if ((engine.input.keyboard.isHeld(Keys.S) || !this.racing) && this.speed < 0) {
 			this.brake(deltaSeconds, false);
 		}
 
@@ -74,14 +75,14 @@ class Car extends Actor {
 		const maxRotationSpeed = this.maxRotationSpeed * deltaSeconds;
 		const steeringSensitivity = Math.min(this.rotationSpeed * Math.abs(this.speed) * deltaSeconds, maxRotationSpeed);
 
-		if (engine.input.keyboard.isHeld(Keys.D) && !engine.input.keyboard.isHeld(Keys.A)) {
+		if (this.racing && engine.input.keyboard.isHeld(Keys.D) && !engine.input.keyboard.isHeld(Keys.A)) {
 			this.steeringWheelRotation = Math.min(this.steeringWheelRotation + this.steeringWheelRotationSpeed * deltaSeconds, 1);
 			if (this.speed <= 0) {
 				this.rotation += steeringSensitivity * this.steeringWheelRotation;
 			} else if (this.speed > 0) {
 				this.rotation -= steeringSensitivity * this.steeringWheelRotation;
 			}
-		} else if (engine.input.keyboard.isHeld(Keys.A) && !engine.input.keyboard.isHeld(Keys.D)) {
+		} else if (this.racing && engine.input.keyboard.isHeld(Keys.A) && !engine.input.keyboard.isHeld(Keys.D)) {
 			this.steeringWheelRotation = Math.max(this.steeringWheelRotation - this.steeringWheelRotationSpeed * deltaSeconds, -1);
 			if (this.speed <= 0) {
 				this.rotation += steeringSensitivity * this.steeringWheelRotation;
@@ -95,6 +96,14 @@ class Car extends Actor {
 		if (this.speed !== 0) this.applyEarodynamicDrag(deltaSeconds);
 
 		this.applyNewSpeed();
+	}
+
+	startRacing() {
+		this.racing = true;
+	}
+
+	stopRacing() {
+		this.racing = false;
 	}
 
 	straightenSteeringWheel(deltaSeconds, steeringSensitivity) {

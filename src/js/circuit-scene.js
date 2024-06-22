@@ -10,9 +10,17 @@ class Circuit extends Scene {
 	jointsData;
 	straightsData;
 	joints = [];
+	startIndex;
+	finishIndex;
+	checkpointIndexes = [];
 	straights = [];
+	hasCar = false;
 	cameraStrategy;
 	ui;
+	time = 0;
+	countdown = 3000;
+	remainingCountdown = this.countdown;
+	raceActive = false;
 
 	constructor(name, joints, straights) {
 		super();
@@ -22,11 +30,22 @@ class Circuit extends Scene {
 	}
 
 	onInitialize() {
+		this.ui = new UI();
+
 		this.createGrass();
 		this.createJoints();
 		this.createStraights();
 		this.cameraStrategy = new RotateCameraStrategy(player.carActor);
-		this.ui = new UI();
+		this.joints[this.finishIndex].on('collisionstart', (e) => {
+			if (!this.raceActive) return;
+			if (e.other !== player.carActor) return;
+			let checkpointsChecked = true;
+			this.checkpointIndexes.forEach((index) => {
+				if (this.joints[index].visited === false) checkpointsChecked = false;
+			});
+			if (!checkpointsChecked) return;
+			this.finish();
+		});
 	}
 
 	onActivate() {
@@ -39,12 +58,65 @@ class Circuit extends Scene {
 		this.camera.strategy.lockToActor(player.carActor);
 	}
 
-	onPreUpdate(engine) {
+	onDeactivate() {
+		this.ui.hideDisqualification();
+		this.ui.hideFinish();
+		this.remove(player.carActor);
+		this.joints.forEach((joint) => {
+			joint.visited = false;
+		});
+		this.time = 0;
+		this.remainingCountdown = this.countdown;
+		this.deActivateRace();
+		this.ui.updateCountdown('');
+	}
+
+	onPreUpdate(engine, delta) {
 		if (engine.input.keyboard.wasPressed(Keys.Esc)) engine.goToScene('menu');
+		if (this.remainingCountdown > 0) {
+			this.remainingCountdown = Math.max(this.remainingCountdown - delta, 0);
+			this.ui.updateCountdown((this.remainingCountdown / 1000).toFixed(1));
+			if (this.remainingCountdown === 0) {
+				this.activateRace();
+				this.ui.updateCountdown('');
+			}
+		}
+		this.time += delta;
 	}
 
 	onPostUpdate() {
 		this.ui.steeringWheel.rotate(player.carActor.steeringWheelRotation);
+		if (!this.checkOnTrack()) this.disqualify();
+	}
+
+	activateRace() {
+		this.raceActive = true;
+		player.carActor.startRacing();
+	}
+
+	deActivateRace() {
+		this.raceActive = false;
+		player.carActor.stopRacing();
+	}
+
+	finish() {
+		this.ui.showFinish(this.time, 100);
+		this.deActivateRace();
+	}
+
+	disqualify() {
+		this.ui.showDisqualification();
+		this.deActivateRace();
+	}
+
+	checkOnTrack() {
+		if (!this.raceActive) return true;
+		let onTrack = false;
+		const trackPieces = this.joints.concat(this.straights);
+		trackPieces.forEach((track) => {
+			if (track.hasCar) onTrack = true;
+		});
+		return onTrack;
 	}
 
 	createGrass() {
@@ -57,8 +129,11 @@ class Circuit extends Scene {
 	}
 
 	createJoints() {
-		this.jointsData.forEach((jointData) => {
+		this.jointsData.forEach((jointData, index) => {
 			const joint = new TrackJoint(jointData);
+			if (joint.checkpoint) this.checkpointIndexes.push(index);
+			if (joint.start) this.startIndex = index;
+			if (joint.finish) this.finishIndex = index;
 			this.joints.push(joint);
 			this.add(joint);
 		});
