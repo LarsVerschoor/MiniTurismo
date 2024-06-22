@@ -69,7 +69,7 @@ class CircuitCard extends Actor {
 		this.nameText = new InfoText(new Vector(100, 0), this.circuitData.name);
 		this.bestLapText = new InfoText(
 			new Vector(450, 0),
-			`Fastest lap: ${player.bestLaps[this.circuitData.name] ? player.bestLaps[this.circuitData.name].toFixed(2) : 'not played'}`
+			`Fastest lap: ${player.bestLaps[this.circuitData.name] ? (player.bestLaps[this.circuitData.name] / 1000).toFixed(2) : 'not played'}`
 		);
 		this.button = new GoButton(new Vector(700, 0), this.circuitData.name, 'Go!');
 	}
@@ -82,7 +82,9 @@ class CircuitCard extends Actor {
 	update() {
 		this.bestLapText.graphics.use(
 			new Text({
-				text: `Fastest lap: ${player.bestLaps[this.circuitData.name] ? player.bestLaps[this.circuitData.name].toFixed(2) : 'not played'}`,
+				text: `Fastest lap: ${
+					player.bestLaps[this.circuitData.name] ? (player.bestLaps[this.circuitData.name] / 1000).toFixed(2) : 'not played'
+				}`,
 				font: new Font({
 					size: 23,
 					color: Color.fromHex('#FFFFFF'),

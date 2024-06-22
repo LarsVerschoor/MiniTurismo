@@ -30,7 +30,7 @@ class Circuit extends Scene {
 	}
 
 	onInitialize() {
-		this.ui = new UI();
+		this.ui = new UI(this.name);
 
 		this.createGrass();
 		this.createJoints();
@@ -101,7 +101,7 @@ class Circuit extends Scene {
 	}
 
 	finish() {
-		this.ui.showFinish(this.time);
+		this.ui.showFinish(this.time / 1000);
 		this.deActivateRace();
 		if (player.bestLaps[this.name] === null || this.time < player.bestLaps[this.name]) {
 			player.bestLaps[this.name] = this.time;

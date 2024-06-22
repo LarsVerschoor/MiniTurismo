@@ -10,9 +10,11 @@ class UI extends ScreenElement {
 	finishDialogShowing = false;
 	countdown;
 	countdownShowing = false;
+	circuit;
 
-	constructor() {
+	constructor(name) {
 		super();
+		this.circuit = name;
 	}
 
 	onInitialize(engine) {
@@ -32,7 +34,7 @@ class UI extends ScreenElement {
 				{
 					text: 'retry',
 					pos: new Vector(-100, 80),
-					sceneId: 'spa-francorchamps'
+					sceneId: this.circuit
 				},
 				{
 					text: 'exit',
@@ -52,7 +54,7 @@ class UI extends ScreenElement {
 				{
 					text: 'retry',
 					pos: new Vector(-100, 80),
-					sceneId: 'spa-francorchamps'
+					sceneId: this.circuit
 				},
 				{
 					text: 'exit',
