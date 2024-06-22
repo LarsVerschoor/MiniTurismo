@@ -4,6 +4,8 @@ import {ResourceLoader} from './resources.js';
 import {circuits} from './circuit-data.js';
 import {Circuit} from './circuit-scene.js';
 import {Menu} from './menu-scene.js';
+import {Garage} from './garage-scene.js';
+import {Select} from './select-scene.js';
 
 export class Game extends Engine {
 	circuitIds = [];
@@ -25,6 +27,8 @@ export class Game extends Engine {
 
 		// adding other scenes
 		this.addScene('menu', new Menu());
+		this.addScene('garage', new Garage());
+		this.addScene('select', new Select());
 
 		this.start(ResourceLoader).then(() => this.startGame());
 	}

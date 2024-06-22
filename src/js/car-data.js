@@ -26,29 +26,25 @@ class Car {
 	maxRotationSpeed;
 	image;
 
-	constructor(name, acceleration, brakingDeceleration, rotationSpeed, maxRotationSpeed, image) {
+	constructor(name, image) {
 		this.name = name;
-		this.acceleration = acceleration;
+		this.acceleration = 130;
 		this.constantDragCoefficient = 20;
 		this.linearDragCoefficient = 0.02;
 		this.quadraticDragCoefficient = 0.00012;
-		this.brakingDeceleration = brakingDeceleration;
+		this.brakingDeceleration = 320;
 		this.steeringWheelRotation = 0;
 		this.steeringWheelRotationSpeed = 5;
-		this.rotationSpeed = rotationSpeed;
-		this.maxRotationSpeed = maxRotationSpeed;
+		this.rotationSpeed = (Math.PI * 2) / 700;
+		this.maxRotationSpeed = (Math.PI * 2) / 4.2;
 		this.image = image;
 	}
 }
 
-cars['porsche'] = new Car(
-	'porsche',
-	120,
-	350,
-	(Math.PI * 2) / 450,
-	(Math.PI * 2) / 4,
+cars['ford'] = new Car('ford', Resources.Ford);
 
-	Resources.Porsche
-);
+cars['porsche'] = new Car('porsche', Resources.Porsche);
+
+cars['ferrari'] = new Car('ferrari', Resources.Ferrari);
 
 export {cars};

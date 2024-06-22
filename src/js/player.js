@@ -1,37 +1,37 @@
 import {cars as carsData} from './car-data';
 import {Car} from './car';
+import {circuits as circuitsData} from './circuit-data';
 
 class Player {
 	cars;
+	carActors = [];
 	car;
 	credits;
+	carActor;
+	bestLaps = {};
 
 	constructor({cars, car, credits}) {
-		this.cars = cars;
-		this.car = car ?? this.cars[0];
+		this.cars = cars; // array of id's
+		this.cars.forEach((carName) => {
+			this.carActors[carName] = new Car(carsData[carName]); // array of car actors
+		});
+		this.car = car ?? this.cars[1];
+		this.carActor = this.carActors[this.car];
 		this.credits = credits;
-		this.carActor = new Car(carsData[this.car]);
-
-		this.save();
+		Object.keys(circuitsData).forEach((circuitName) => {
+			this.bestLaps[circuitName] = null;
+		});
 	}
 
-	save() {
-		localStorage.setItem(
-			'player',
-			JSON.stringify({
-				cars: this.cars,
-				car: this.car,
-				credits: this.credits
-			})
-		);
+	changeCar(carName) {
+		this.car = carName;
+		this.carActor = this.carActors[carName];
 	}
 }
 
-const player = new Player(
-	JSON.parse(localStorage.getItem('player')) ?? {
-		cars: Object.keys(carsData),
-		credits: 0
-	}
-);
+const player = new Player({
+	cars: ['porsche', 'ford', 'ferrari'],
+	credits: 0
+});
 
 export {player};

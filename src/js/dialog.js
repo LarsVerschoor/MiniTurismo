@@ -26,7 +26,6 @@ class Dialog extends Actor {
 	}
 
 	onInitialize(engine) {
-		console.log('initialize!');
 		this.titleActor = new Actor({pos: this.titlePos});
 		this.titleActor.graphics.use(
 			new Text({
@@ -83,7 +82,6 @@ class Dialog extends Actor {
 
 	changeText(text) {
 		this.text = text;
-		console.log(this.textActor);
 		this.textActor.graphics.use(
 			new Text({
 				text: this.text,

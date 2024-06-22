@@ -35,7 +35,7 @@ class Circuit extends Scene {
 		this.createGrass();
 		this.createJoints();
 		this.createStraights();
-		this.cameraStrategy = new RotateCameraStrategy(player.carActor);
+
 		this.joints[this.finishIndex].on('collisionstart', (e) => {
 			if (!this.raceActive) return;
 			if (e.other !== player.carActor) return;
@@ -49,6 +49,7 @@ class Circuit extends Scene {
 	}
 
 	onActivate() {
+		this.cameraStrategy = new RotateCameraStrategy(player.carActor);
 		player.carActor.reset();
 		player.carActor.pos = this.joints[0].pos;
 		player.carActor.rotation = this.joints[0].rotation;
@@ -100,8 +101,11 @@ class Circuit extends Scene {
 	}
 
 	finish() {
-		this.ui.showFinish(this.time, 100);
+		this.ui.showFinish(this.time);
 		this.deActivateRace();
+		if (player.bestLaps[this.name] === null || this.time < player.bestLaps[this.name]) {
+			player.bestLaps[this.name] = this.time;
+		}
 	}
 
 	disqualify() {

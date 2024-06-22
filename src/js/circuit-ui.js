@@ -75,10 +75,10 @@ class UI extends ScreenElement {
 		this.removeChild(this.disqualificationDialog);
 	}
 
-	showFinish(time, credits) {
+	showFinish(time) {
 		if (this.finishDialogShowing || !this.finishDialog) return;
 		this.finishDialogShowing = true;
-		this.finishDialog.changeText(`You finished in ${time.toFixed(2)} seconds! You earned ${credits} credits.`);
+		this.finishDialog.changeText(`You finished in ${time.toFixed(2)} seconds!`);
 		this.addChild(this.finishDialog);
 	}
 
@@ -89,17 +89,8 @@ class UI extends ScreenElement {
 	}
 
 	updateCountdown(text) {
-		// if (!this.countdownShowing) {
-		// 	this.addChild(this.countdown);
-		// }
 		if (this.countdown) this.countdown.changeText(text);
 	}
-
-	// hideCountdown() {
-	// 	if (!this.countdownShowing || !this.countdown) return;
-	// 	this.countdownShowing = false;
-	// 	this.removeChild(this.countdown);
-	// }
 }
 
 class SteeringWheel extends Actor {
@@ -123,7 +114,7 @@ class Countdown extends Actor {
 	text;
 
 	constructor(pos) {
-		super({pos});
+		super({pos, z: 1});
 		this.text = '';
 	}
 

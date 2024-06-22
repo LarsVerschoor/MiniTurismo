@@ -24,12 +24,10 @@ class UI extends ScreenElement {
 
 	onInitialize(engine) {
 		this.graphics.use(this.background.toSprite());
-		this.playButton = new Button(new Vector(engine.drawWidth / 2 - 300, 575), Resources.PlayButton, 'spa-francorchamps');
+		this.playButton = new Button(new Vector(engine.drawWidth / 2 - 150, 575), Resources.PlayButton, 'select');
 		this.addChild(this.playButton);
-		this.garageButton = new Button(new Vector(engine.drawWidth / 2, 575), Resources.GarageButton, '');
+		this.garageButton = new Button(new Vector(engine.drawWidth / 2 + 150, 575), Resources.GarageButton, 'garage');
 		this.addChild(this.garageButton);
-		this.dealershipButton = new Button(new Vector(engine.drawWidth / 2 + 300, 575), Resources.DealershipButton, '');
-		this.addChild(this.dealershipButton);
 	}
 }
 
